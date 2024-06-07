@@ -70,6 +70,7 @@ jobs:
       uses: klever1988/cachewrtbuild@main
       with:
         ccache: 'true'
+        mixkey: 'h68k'
         prefix: ${{ github.workspace }}/openwrt
 
     - name: Load custom feeds
