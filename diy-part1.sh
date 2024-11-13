@@ -9,8 +9,6 @@
 # See /LICENSE for more information.
 #
 
-git revert f0ab317249c09032fd78ecf2216b1fdde825630f
-
 # Uncomment a feed source
 #sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
  sed -i '$a src-git smpackage https://github.com/kenzok8/small-package' feeds.conf.default
