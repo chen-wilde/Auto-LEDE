@@ -96,7 +96,7 @@ jobs:
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
-        sed -i "s/$1$[^:]*:0:/${{ secrets.LEDE_PASSWD }}/g"  package/lean/default-settings/files/zzz-default-settings
+        sed -i 's/$1$[^:]*:0:/${{ secrets.LEDE_PASSWD }}/g'  package/lean/default-settings/files/zzz-default-settings
 
     - name: Download package
       id: package
