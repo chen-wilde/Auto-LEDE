@@ -81,6 +81,9 @@ jobs:
         chmod +x $DIY_P1_SH
         cd openwrt
         git revert af207e5f62bb88247e647483c07a4ea9ca33d318
+        git rm package/boot/uboot-rk35xx/patches/100-disable-optee-build.patch
+        git add package/boot/uboot-rk35xx/patches/100-disable-optee-build.patch
+        git revert --continue
         $GITHUB_WORKSPACE/$DIY_P1_SH
 
     - name: Update feeds
