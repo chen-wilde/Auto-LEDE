@@ -67,7 +67,6 @@ jobs:
         git config --global user.name chen_wilde
         git config --global user.email chen_wilde@icloud.com
         git clone $REPO_URL -b $REPO_BRANCH openwrt
-        git revert af207e5f62bb88247e647483c07a4ea9ca33d318
 
     - name: Cache
       uses: klever1988/cachewrtbuild@main
@@ -81,6 +80,7 @@ jobs:
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
         chmod +x $DIY_P1_SH
         cd openwrt
+        git revert af207e5f62bb88247e647483c07a4ea9ca33d318
         $GITHUB_WORKSPACE/$DIY_P1_SH
 
     - name: Update feeds
