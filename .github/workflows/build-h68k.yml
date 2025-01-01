@@ -159,7 +159,7 @@ jobs:
         curl https://rclone.org/install.sh | sudo bash
         mkdir -p ~/.config/rclone
         echo '${{ secrets.RCLONE_CONFIG }}' > ~/.config/rclone/rclone.conf
-        rclone copy openwrt/bin/targets/*/* $ONEDRIVE_DIR/$(date +"%Y%m%d")/$DEVICE
+        rclone copy openwrt/bin/targets/*/* $ONEDRIVE_DIR/$(date +"%Y%m%d")/$DEVICE-test
 
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@main
