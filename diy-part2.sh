@@ -20,3 +20,4 @@
 
 # Remove conflict package
  rm -rf feeds/smpackage/{base-files,dnsmasq,firewall*,fullconenat,libnftnl,nftables,ppp,opkg,ucl,upx,vsftpd*,miniupnpd-iptables,wireless-regdb}
+ rm -rf feeds/packages/net/qbittorrent
