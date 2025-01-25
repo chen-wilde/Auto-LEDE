@@ -20,4 +20,5 @@
 
 # Remove conflict package
  rm -rf feeds/smpackage/{base-files,dnsmasq,firewall*,fullconenat,libnftnl,nftables,ppp,opkg,ucl,upx,vsftpd*,miniupnpd-iptables,wireless-regdb}
- rm -rf feeds/packages/net/qBittorrent
+ rm -rf feeds/luci/applications/luci-app-mosdns feeds/packages/net/{alist,adguardhome,mosdns,qBittorrent,smartdns} feeds/packages/lang/golang
+ git clone https://github.com/kenzok8/golang feeds/packages/lang/golang
