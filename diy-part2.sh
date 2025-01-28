@@ -20,3 +20,5 @@
 
 # Remove conflict package
  rm -rf feeds/smpackage/{base-files,dnsmasq,firewall*,fullconenat,libnftnl,nftables,ppp,opkg,ucl,upx,vsftpd*,miniupnpd-iptables,wireless-regdb}
+# Fix GO_PKG module path
+ sed -i '25s/shadowsocks/teddysun/' feeds/smpackage/v2ray-plugin/Makefile
