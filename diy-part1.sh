@@ -9,6 +9,11 @@
 # See /LICENSE for more information.
 #
 
+# Add ps225 patch
+ wget https://github.com/openwrt/openwrt/pull/2593.patch
+ sed -i '78d;93,116d;s/4\.19/6\.6/g' 2593.patch
+ git apply 2593.patch
+
 # Uncomment a feed source
 #sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
  sed -i '$a src-git smpackage https://github.com/kenzok8/small-package' feeds.conf.default
