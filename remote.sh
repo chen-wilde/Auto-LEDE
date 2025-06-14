@@ -9,7 +9,7 @@
 # See /LICENSE for more information.
 #
 
-api_request=$(curl -d "client_id=${{ secrets.CLIENT_ID }}" -d "client_secret=${{ secrets.CLIENT_SECRET }}" \
+api_request=$(curl -d "client_id=$CLIENT_ID" -d "client_secret=$CLIENT_SECRET" \
     "https://api.tailscale.com/api/v2/oauth/token")
 access_token=$(echo $api_request | jq -r '.access_token')
 
@@ -53,7 +53,7 @@ config tailscale 'settings'
     list flags '--auth-key=$auth_key'
 EOF
 
-echo '${{ secrets.FRPC_CONFIG }}' > files/etc/config/frpc
-echo '${{ secrets.ZEROTIER_CONFIG }}' > files/etc/config/zerotier
+echo "$FRPC_CONFIG" > files/etc/config/frpc
+echo "$ZEROTIER_CONFIG" > files/etc/config/zerotier
 
-sed -i 's/$1$[^:]*:0:/${{ secrets.LEDE_PASSWD }}/g' openwrt/package/lean/default-settings/files/zzz-default-settings
+sed -i "s/\\\$1\\\$[^:]*:0:/$LEDE_PASSWD/g" openwrt/package/lean/default-settings/files/zzz-default-settings

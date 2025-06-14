@@ -87,6 +87,12 @@ jobs:
       run: cd openwrt && ./scripts/feeds install -a
 
     - name: Load custom configuration
+      env:
+        CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        FRPC_CONFIG: ${{ secrets.FRPC_CONFIG }}
+        ZEROTIER_CONFIG: ${{ secrets.ZEROTIER_CONFIG }}
+        LEDE_PASSWD: ${{ secrets.LEDE_PASSWD }}
       run: |
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
