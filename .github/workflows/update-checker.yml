@@ -16,12 +16,12 @@ env:
 
 on:
   workflow_dispatch:
-#  schedule:
-#    - cron: 0 */8 * * *
+  schedule:
+    - cron: 0 */8 * * *
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
 
