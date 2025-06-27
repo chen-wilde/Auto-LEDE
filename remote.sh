@@ -57,4 +57,4 @@ echo "$FRPC_CONFIG" > files/etc/config/frpc
 echo "$TUNNEL_CONFIG" > files/etc/config/cloudflared
 echo "$ZEROTIER_CONFIG" > files/etc/config/zerotier
 
-sed -i "s/\\\$1\\\$[^:]*:0:/$LEDE_PASSWD/g" openwrt/package/lean/default-settings/files/zzz-default-settings
+sed -i "s/\\\$1\\\$[^:]*:0:/$LEDE_PASSWD/g" package/lean/default-settings/files/zzz-default-settings
