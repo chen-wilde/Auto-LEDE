@@ -92,6 +92,7 @@ jobs:
         CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
         FRPC_CONFIG: ${{ secrets.FRPC_CONFIG }}
         TUNNEL_CONFIG: ${{ secrets.TUNNEL_CONFIG }}
+        TUNNEL_CERT: ${{ secrets.TUNNEL_CERT }}
         ZEROTIER_CONFIG: ${{ secrets.ZEROTIER_CONFIG }}
         LEDE_PASSWD: ${{ secrets.LEDE_PASSWD }}
       run: |

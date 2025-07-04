@@ -33,17 +33,18 @@ key_request=$(curl --request POST \
 }')
 auth_key=$(echo $key_request | jq -r '.key')
 
-mkdir -p files/etc/config
+mkdir -p files/etc/{config,cloudflared}
+
 cat > files/etc/config/tailscale << EOF
 
 config tailscale 'settings'
-    option enabled '1'
-    option fw_mode 'iptables'
-    option port '41641'
-    option config_path '/etc/tailscale'
-    option state_file '/etc/tailscale/tailscaled.state'
-    option log_stdout '1'
     option log_stderr '1'
+    option log_stdout '1'
+    option port '41641'
+    option state_file '/etc/tailscale/tailscaled.state'
+    option fw_mode 'iptables'
+    option enabled '1'
+    option config_path '/etc/tailscale'
     option acceptRoutes '0'
     option acceptDNS '1'
     option advertiseExitNode '0'
@@ -55,6 +56,7 @@ EOF
 
 echo "$FRPC_CONFIG" > files/etc/config/frpc
 echo "$TUNNEL_CONFIG" > files/etc/config/cloudflared
+echo "$TUNNEL_CERT" > files/etc/cloudflared/cert.pem
 echo "$ZEROTIER_CONFIG" > files/etc/config/zerotier
 
 sed -i "s/\\\$1\\\$[^:]*:0:/$LEDE_PASSWD/g" package/lean/default-settings/files/zzz-default-settings
