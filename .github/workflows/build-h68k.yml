@@ -90,16 +90,16 @@ jobs:
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
         CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
         FRPC_CONFIG: ${{ secrets.FRPC_CONFIG }}
-        TUNNEL_CONFIG: ${{ secrets.TUNNEL_CONFIG }}
-        TUNNEL_CERT: ${{ secrets.TUNNEL_CERT }}
-        ZEROTIER_CONFIG: ${{ secrets.ZEROTIER_CONFIG }}
         LEDE_PASSWD: ${{ secrets.LEDE_PASSWD }}
+        TUNNEL_TOKEN: ${{ secrets.TUNNEL_TOKEN }}
+        TUNNEL_CERT: ${{ secrets.TUNNEL_CERT }}
+        ZTIER_CONFIG: ${{ secrets.ZTIER_CONFIG }}
       run: |
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        chmod +x remote.sh $DIY_P2_SH
+        chmod +x h68k.sh $DIY_P2_SH
         cd openwrt
-        $GITHUB_WORKSPACE/remote.sh
+        $GITHUB_WORKSPACE/h68k.sh
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
     - name: Download package

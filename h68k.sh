@@ -2,12 +2,19 @@
 #
 # https://github.com/chen-wilde/Actions-OpenWrt
 #
-# File name: remote.sh
+# File name: h68k.sh
 # Description: OpenWrt script for create remote config (Before diy script part 2)
 #
 # This is free software, licensed under the MIT License.
 # See /LICENSE for more information.
 #
+
+mkdir -p files/etc/{config,cloudflared}
+echo "$FRPC_CONFIG" > files/etc/config/frpc
+echo "$TUNNEL_CERT" > files/etc/cloudflared/cert.pem
+echo "$ZTIER_CONFIG" > files/etc/config/zerotier
+
+sed -i "s/\\\$1\\\$[^:]*:0:/$LEDE_PASSWD/g" package/lean/default-settings/files/zzz-default-settings
 
 api_request=$(curl -d "client_id=$CLIENT_ID" -d "client_secret=$CLIENT_SECRET" \
     "https://api.tailscale.com/api/v2/oauth/token")
@@ -33,16 +40,8 @@ key_request=$(curl --request POST \
 }')
 auth_key=$(echo $key_request | jq -r '.key')
 
-mkdir -p files/etc/{config,cloudflared}
-
-cat > files/etc/config/tailscale << EOF
-
-config tailscale 'settings'
-    option log_stderr '1'
-    option log_stdout '1'
-    option port '41641'
-    option state_file '/etc/tailscale/tailscaled.state'
-    option fw_mode 'iptables'
+cd feeds/packages/net
+cat >> tailscale/files/tailscale.conf << EOF
     option enabled '1'
     option config_path '/etc/tailscale'
     option acceptRoutes '0'
@@ -54,9 +53,4 @@ config tailscale 'settings'
     list flags '--auth-key=$auth_key'
 EOF
 
-echo "$FRPC_CONFIG" > files/etc/config/frpc
-echo "$TUNNEL_CONFIG" > files/etc/config/cloudflared
-echo "$TUNNEL_CERT" > files/etc/cloudflared/cert.pem
-echo "$ZEROTIER_CONFIG" > files/etc/config/zerotier
-
-sed -i "s/\\\$1\\\$[^:]*:0:/$LEDE_PASSWD/g" package/lean/default-settings/files/zzz-default-settings
+sed -i "s/enabled '0'/enabled '1'/;s/token ''/token '$TUNNEL_TOKEN'/" cloudflared/files/cloudflared.config

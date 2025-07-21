@@ -22,8 +22,8 @@ env:
   DEVICE: NanoPi_R2S
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
-  UPLOAD_FIRMWARE: true
-  UPLOAD_RELEASE: true
+  UPLOAD_FIRMWARE: false
+  UPLOAD_RELEASE: false
   UPLOAD_ONEDRIVE: true
   ONEDRIVE_DIR: onedrive:/Build/Actions
   TZ: Asia/Shanghai
@@ -86,11 +86,17 @@ jobs:
       run: cd openwrt && ./scripts/feeds install -a
 
     - name: Load custom configuration
+      env:
+        ACME_CONFIG: ${{ secrets.ACME_CONFIG }}
+        DDNS_CONFIG: ${{ secrets.DDNS_CONFIG }}
+        LEDE_PASSWD: ${{ secrets.LEDE_PASSWD }}
+        PPPOE_USER: ${{ secrets.PPPOE_USER }}
       run: |
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        chmod +x $DIY_P2_SH
+        chmod +x r2s.sh $DIY_P2_SH
         cd openwrt
+        $GITHUB_WORKSPACE/r2s.sh
         $GITHUB_WORKSPACE/$DIY_P2_SH
 
     - name: Download package
