@@ -20,7 +20,7 @@ config redirect
 	option name		https
 	option src		wan
 	option src_dport	1443
-	option dest			lan
+	option dest		lan
 	option dest_ip		192.168.1.1
 	option dest_port	443
 	option target		DNAT
