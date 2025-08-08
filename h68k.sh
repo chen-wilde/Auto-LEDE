@@ -40,17 +40,15 @@ key_request=$(curl --request POST \
 }')
 auth_key=$(echo $key_request | jq -r '.key')
 
-cd feeds/packages/net
-cat >> tailscale/files/tailscale.conf << EOF
-    option enabled '1'
-    option config_path '/etc/tailscale'
-    option acceptRoutes '0'
-    option acceptDNS '1'
-    option advertiseExitNode '0'
-    list access 'tsfwlan'
-    list access 'tsfwwan'
-    list access 'lanfwts'
-    list flags '--auth-key=$auth_key'
+cd feeds
+cat >> luci/applications/luci-app-tailscale/root/etc/config/tailscale << EOF
+	option accept_routes '0'
+	option advertise_exit_node '0'
+	list access 'ts_ac_lan'
+	list access 'ts_ac_wan'
+	list access 'lan_ac_ts'
+	list flags '--auth-key=$auth_key'
 EOF
 
-sed -i "s/enabled '0'/enabled '1'/;s/token ''/token '$TUNNEL_TOKEN'/" cloudflared/files/cloudflared.config
+sed -i "s/enabled '0'/enabled '1'/" luci/applications/luci-app-tailscale/root/etc/config/tailscale
+sed -i "s/enabled '0'/enabled '1'/;s/token ''/token '$TUNNEL_TOKEN'/" packages/net/cloudflared/files/cloudflared.config
