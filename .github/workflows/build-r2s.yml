@@ -89,8 +89,12 @@ jobs:
     - name: Load custom configuration
       env:
         ACME_CONFIG: ${{ secrets.ACME_CONFIG }}
+        CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
         DDNS_CONFIG: ${{ secrets.DDNS_CONFIG }}
         LEDE_PASSWD: ${{ secrets.LEDE_PASSWD }}
+        TUNNEL_CERT: ${{ secrets.TUNNEL_CERT }}
+        TUNR2S_TOKEN: ${{ secrets.TUNR2S_TOKEN }}
         PPPOE_USER: ${{ secrets.PPPOE_USER }}
       run: |
         [ -e files ] && mv files openwrt/files

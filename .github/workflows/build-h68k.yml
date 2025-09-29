@@ -92,8 +92,8 @@ jobs:
         CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
         FRPC_CONFIG: ${{ secrets.FRPC_CONFIG }}
         LEDE_PASSWD: ${{ secrets.LEDE_PASSWD }}
-        TUNNEL_TOKEN: ${{ secrets.TUNNEL_TOKEN }}
         TUNNEL_CERT: ${{ secrets.TUNNEL_CERT }}
+        TUNH68K_TOKEN: ${{ secrets.TUNH68K_TOKEN }}
         ZTIER_CONFIG: ${{ secrets.ZTIER_CONFIG }}
       run: |
         [ -e files ] && mv files openwrt/files

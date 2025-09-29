@@ -20,23 +20,22 @@ api_request=$(curl -d "client_id=$CLIENT_ID" -d "client_secret=$CLIENT_SECRET" \
     "https://api.tailscale.com/api/v2/oauth/token")
 access_token=$(echo $api_request | jq -r '.access_token')
 
-key_request=$(curl --request POST \
-    --url 'https://api.tailscale.com/api/v2/tailnet/-/keys?all=true' \
-    --header "Authorization: Bearer $access_token" \
-    --header 'Content-Type: application/json' \
-    --data '{
-    "capabilities": {
+key_request=$(curl 'https://api.tailscale.com/api/v2/tailnet/-/keys' \
+  --request POST \
+  --header 'Content-Type: application/json' \
+  --header "Authorization: Bearer $access_token" \
+  --data '{
+  "capabilities": {
     "devices": {
-        "create": {
+      "create": {
         "preauthorized": true,
         "tags": [
-            "tag:lede"
+          "tag:lede"
         ]
-        }
+      }
     }
-    },
-    "expirySeconds": 864000,
-    "description": "actions"
+  },
+  "expirySeconds": 864000
 }')
 auth_key=$(echo $key_request | jq -r '.key')
 
@@ -51,4 +50,4 @@ cat >> luci/applications/luci-app-tailscale/root/etc/config/tailscale << EOF
 EOF
 
 sed -i "s/enabled '0'/enabled '1'/" luci/applications/luci-app-tailscale/root/etc/config/tailscale
-sed -i "s/enabled '0'/enabled '1'/;s/token ''/token '$TUNNEL_TOKEN'/" packages/net/cloudflared/files/cloudflared.config
+sed -i "s/enabled '0'/enabled '1'/;s/token ''/token '$TUNH68K_TOKEN'/" packages/net/cloudflared/files/cloudflared.config
