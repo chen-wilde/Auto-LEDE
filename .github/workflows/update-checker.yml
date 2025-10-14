@@ -11,7 +11,7 @@
 name: Update Checker
 
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
+  REPO_PATH: coolsnowwolf/lede
   REPO_BRANCH: master
 
 on:
@@ -25,11 +25,36 @@ jobs:
 
     steps:
 
+    - name: Restore Rclone Cache
+      id: restoreCache
+      uses: actions/cache/restore@main
+      with:
+        path: ~/.config/rclone/rclone.conf
+        key: rcloneConf
+
+    - name: Refresh Expiry Date
+      id: refreshDate
+      run: |
+        if [ ! -s ~/.config/rclone/rclone.conf ]; then
+          mkdir -p ~/.config/rclone
+          echo '${{ secrets.RCLONE_CONFIG }}' > ~/.config/rclone/rclone.conf
+        fi
+        curl https://rclone.org/install.sh | sudo bash
+        rclone about onedrive:
+        EXPIRY=$(jq -r '.expiry' <(sed -En 's/.*token = (.*)/\1/p' ~/.config/rclone/rclone.conf))
+        echo "expiry=$EXPIRY" >> $GITHUB_OUTPUT
+
+    - name: Save Rclone Cache
+      uses: actions/cache/save@main
+      with:
+        path: ~/.config/rclone/rclone.conf
+        key: rcloneConf_${{ steps.refreshDate.outputs.expiry }}
+
     - name: Get Commit Hash
       id: getHash
       run: |
-        git clone --depth 1 $REPO_URL -b $REPO_BRANCH .
-        echo "commitHash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+        commitHash=$(curl -s "https://api.github.com/repos/${REPO_PATH}/commits/${REPO_BRANCH}" | jq -r '.sha')
+        echo "commitHash=$commitHash" >> $GITHUB_OUTPUT
 
     - name: Compare Commit Hash
       id: cacheHash
