@@ -26,7 +26,6 @@ jobs:
     steps:
 
     - name: Restore Rclone Cache
-      id: restoreCache
       uses: actions/cache/restore@main
       with:
         path: ~/.config/rclone/rclone.conf
