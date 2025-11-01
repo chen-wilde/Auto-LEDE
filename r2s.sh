@@ -62,6 +62,6 @@ cd package
 #	option target		DNAT
 #EOF
 
-sed -i 's/-dhcp/-pppoe/' base-files/luci2/lib/functions/uci-defaults.sh
-sed -i "s/'username'/'$PPPOE_USER'/;s/'password'/'006688'/" base-files/luci2/bin/config_generate
+sed -i 's/-dhcp/-pppoe/' base-files/files/lib/functions/uci-defaults.sh
+sed -i "s/'username'/'$PPPOE_USER'/;s/'password'/'006688'/" base-files/files/bin/config_generate
 sed -i "s/\\\$1\\\$[^:]*:0:/$LEDE_PASSWD/g" lean/default-settings/files/zzz-default-settings
