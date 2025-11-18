@@ -1,5 +1,5 @@
 #
-# https://github.com/chen-wilde/Actions-OpenWrt
+# https://github.com/chen-wilde/Auto-LEDE
 #
 # File: .github/workflows/openwrt-bulder.yml
 # Description: Build OpenWrt using GitHub Actions
@@ -8,7 +8,7 @@
 # See /LICENSE for more information.
 #
 
-name: Build H68K firmware
+name: Build h68k firmware
 
 on:
   repository_dispatch:
@@ -19,10 +19,9 @@ env:
   REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: h68k.config
-  DEVICE: Hinlink_H68K
+  DEVICE: HinLink_H68K
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
-  DIY_P3_SH: h68k.sh
   UPLOAD_ONEDRIVE: true
   ONEDRIVE_DIR: onedrive:/Build/Actions
   TZ: Asia/Shanghai
@@ -74,7 +73,7 @@ jobs:
     - name: Load custom feeds
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        chmod +x $DIY_P1_SH $DIY_P2_SH $DIY_P3_SH
+        chmod +x $DIY_P1_SH $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
 
@@ -87,19 +86,9 @@ jobs:
       run: cd openwrt && ./scripts/feeds install -a
 
     - name: Load custom configuration
-      env:
-        CLIENT_ID: ${{ secrets.CLIENT_ID }}
-        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-        FRPC_CONFIG: ${{ secrets.FRPC_CONFIG }}
-        LEDE_PASSWD: ${{ secrets.LEDE_PASSWD }}
-        TUNNEL_CERT: ${{ secrets.TUNNEL_CERT }}
-        TUNH68K_TOKEN: ${{ secrets.TUNH68K_TOKEN }}
-        ZTIER_CONFIG: ${{ secrets.ZTIER_CONFIG }}
       run: |
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P3_SH
 
     - name: Download package
       id: package

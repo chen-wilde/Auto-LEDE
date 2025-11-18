@@ -1,8 +1,8 @@
 #!/bin/bash
 #
-# https://github.com/chen-wilde/Actions-OpenWrt
+# https://github.com/chen-wilde/Auto-LEDE
 #
-# File name: h68k.sh
+# File name: x86_64.sh
 # Description: OpenWrt script for create remote config (Before diy script part 2)
 #
 # This is free software, licensed under the MIT License.
@@ -50,4 +50,4 @@ cat >> luci/applications/luci-app-tailscale/root/etc/config/tailscale << EOF
 EOF
 
 sed -i "s/enabled '0'/enabled '1'/" luci/applications/luci-app-tailscale/root/etc/config/tailscale
-sed -i "s/enabled '0'/enabled '1'/;s/token ''/token '$TUNH68K_TOKEN'/" packages/net/cloudflared/files/cloudflared.config
+sed -i "s/enabled '0'/enabled '1'/;s/token ''/token '$TUNX86_TOKEN'/" packages/net/cloudflared/files/cloudflared.config

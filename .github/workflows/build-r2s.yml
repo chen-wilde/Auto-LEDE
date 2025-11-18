@@ -1,5 +1,5 @@
 #
-# https://github.com/chen-wilde/Actions-OpenWrt
+# https://github.com/chen-wilde/Auto-LEDE
 #
 # File: .github/workflows/openwrt-bulder.yml
 # Description: Build OpenWrt using GitHub Actions
@@ -8,7 +8,7 @@
 # See /LICENSE for more information.
 #
 
-name: Build R2S firmware
+name: Build r2s firmware
 
 on:
   repository_dispatch:

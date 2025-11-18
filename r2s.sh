@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# https://github.com/chen-wilde/Actions-OpenWrt
+# https://github.com/chen-wilde/Auto-LEDE
 #
 # File name: r2s.sh
 # Description: OpenWrt script for create remote config (Before diy script part 2)
