@@ -1,7 +1,7 @@
 #
 # https://github.com/chen-wilde/Auto-LEDE
 #
-# File: .github/workflows/openwrt-bulder.yml
+# File: .github/workflows/build-x86_64.yml
 # Description: Build OpenWrt using GitHub Actions
 #
 # This is free software, licensed under the MIT License.
@@ -18,11 +18,9 @@ env:
   REPO_URL: https://github.com/coolsnowwolf/lede
   REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: x86_64.config
-  DEVICE: x86_64
+  CONFIG_FILE: x86.config
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
-  DIY_P3_SH: x86_64.sh
   UPLOAD_ONEDRIVE: true
   ONEDRIVE_DIR: onedrive:/Build/Actions
   TZ: Asia/Shanghai
@@ -30,6 +28,13 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - DEVICE: x86
+            DIY_P3_SH: x86.sh
+          - DEVICE: x86-1
+            DIY_P3_SH: x86-1.sh
 
     steps:
     - name: Maximize build space
@@ -68,13 +73,13 @@ jobs:
       uses: klever1988/cachewrtbuild@main
       with:
         ccache: 'true'
-        mixkey: 'x86_64'
+        mixkey: ${{ env.DEVICE }}
         prefix: ${{ github.workspace }}/openwrt
 
     - name: Load custom feeds
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        chmod +x $DIY_P1_SH $DIY_P2_SH $DIY_P3_SH
+        chmod +x $DIY_P1_SH $DIY_P2_SH ${{ matrix.DIY_P3_SH }}
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
 
@@ -87,19 +92,12 @@ jobs:
       run: cd openwrt && ./scripts/feeds install -a
 
     - name: Load custom configuration
-      env:
-        CLIENT_ID: ${{ secrets.CLIENT_ID }}
-        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-        FRPC_CONFIG: ${{ secrets.FRPC_CONFIG }}
-        LEDE_PASSWD: ${{ secrets.LEDE_PASSWD }}
-        TUNNEL_CERT: ${{ secrets.TUNNEL_CERT }}
-        TUNX86_TOKEN: ${{ secrets.TUNX86_TOKEN }}
-        ZTIER_CONFIG: ${{ secrets.ZTIER_CONFIG }}
+      env: ${{ secrets }}
       run: |
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P3_SH
+        $GITHUB_WORKSPACE/${{ matrix.DIY_P3_SH }}
 
     - name: Download package
       id: package

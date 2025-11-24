@@ -1,7 +1,7 @@
 #
 # https://github.com/chen-wilde/Auto-LEDE
 #
-# File: .github/workflows/openwrt-bulder.yml
+# File: .github/workflows/build-h68k.yml
 # Description: Build OpenWrt using GitHub Actions
 #
 # This is free software, licensed under the MIT License.

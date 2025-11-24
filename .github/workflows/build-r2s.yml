@@ -1,7 +1,7 @@
 #
 # https://github.com/chen-wilde/Auto-LEDE
 #
-# File: .github/workflows/openwrt-bulder.yml
+# File: .github/workflows/build-r2s.yml
 # Description: Build OpenWrt using GitHub Actions
 #
 # This is free software, licensed under the MIT License.
@@ -22,7 +22,6 @@ env:
   DEVICE: NanoPi_R2S
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
-  DIY_P3_SH: r2s.sh
   UPLOAD_ONEDRIVE: true
   ONEDRIVE_DIR: onedrive:/Build/Actions
   TZ: Asia/Shanghai
@@ -74,7 +73,7 @@ jobs:
     - name: Load custom feeds
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        chmod +x $DIY_P1_SH $DIY_P2_SH $DIY_P3_SH
+        chmod +x $DIY_P1_SH $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
 
@@ -87,20 +86,9 @@ jobs:
       run: cd openwrt && ./scripts/feeds install -a
 
     - name: Load custom configuration
-      env:
-        ACME_CONFIG: ${{ secrets.ACME_CONFIG }}
-        CLIENT_ID: ${{ secrets.CLIENT_ID }}
-        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-        DDNS_CONFIG: ${{ secrets.DDNS_CONFIG }}
-        LEDE_PASSWD: ${{ secrets.LEDE_PASSWD }}
-        TUNNEL_CERT: ${{ secrets.TUNNEL_CERT }}
-        TUNR2S_TOKEN: ${{ secrets.TUNR2S_TOKEN }}
-        PPPOE_USER: ${{ secrets.PPPOE_USER }}
       run: |
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P3_SH
 
     - name: Download package
       id: package

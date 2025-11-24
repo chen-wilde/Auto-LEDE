@@ -2,7 +2,7 @@
 #
 # https://github.com/chen-wilde/Auto-LEDE
 #
-# File name: x86_64.sh
+# File name: x86-1.sh
 # Description: OpenWrt script for create remote config (Before diy script part 2)
 #
 # This is free software, licensed under the MIT License.
@@ -10,11 +10,12 @@
 #
 
 mkdir -p files/etc/{config,cloudflared}
-echo "$FRPC_CONFIG" > files/etc/config/frpc
+echo "$ACME_CONFIG" > files/etc/config/acme
+echo "$DDNS_CONFIG" > files/etc/config/ddns
 echo "$TUNNEL_CERT" > files/etc/cloudflared/cert.pem
-echo "$ZTIER_CONFIG" > files/etc/config/zerotier
 
-sed -i "s/\\\$1\\\$[^:]*:0:/$LEDE_PASSWD/g" package/lean/default-settings/files/zzz-default-settings
+sed -i "s/enabled '0'/enabled '1'/" feeds/luci/applications/luci-app-tailscale/root/etc/config/tailscale
+sed -i "s/enabled '0'/enabled '1'/;s/token ''/token '$TUNX86_TOKEN1'/" feeds/packages/net/cloudflared/files/cloudflared.config
 
 api_request=$(curl -d "client_id=$CLIENT_ID" -d "client_secret=$CLIENT_SECRET" \
     "https://api.tailscale.com/api/v2/oauth/token")
@@ -39,8 +40,7 @@ key_request=$(curl 'https://api.tailscale.com/api/v2/tailnet/-/keys' \
 }')
 auth_key=$(echo $key_request | jq -r '.key')
 
-cd feeds
-cat >> luci/applications/luci-app-tailscale/root/etc/config/tailscale << EOF
+cat >> feeds/luci/applications/luci-app-tailscale/root/etc/config/tailscale << EOF
 	option accept_routes '0'
 	option advertise_exit_node '0'
 	list access 'ts_ac_lan'
@@ -49,5 +49,19 @@ cat >> luci/applications/luci-app-tailscale/root/etc/config/tailscale << EOF
 	list flags '--auth-key=$auth_key'
 EOF
 
-sed -i "s/enabled '0'/enabled '1'/" luci/applications/luci-app-tailscale/root/etc/config/tailscale
-sed -i "s/enabled '0'/enabled '1'/;s/token ''/token '$TUNX86_TOKEN'/" packages/net/cloudflared/files/cloudflared.config
+cd package
+#cat >> network/config/firewall/files/firewall.config << EOF
+
+#config redirect
+#	option name		https
+#	option src		wan
+#	option src_dport	1443
+#	option dest		lan
+#	option dest_ip		192.168.1.1
+#	option dest_port	443
+#	option target		DNAT
+#EOF
+
+sed -i 's/-dhcp/-pppoe/' base-files/files/lib/functions/uci-defaults.sh
+sed -i "s/'username'/'$PPPOE_USER'/;s/'password'/'006688'/" base-files/files/bin/config_generate
+sed -i "s/\\\$1\\\$[^:]*:0:/$LEDE_PASSWD/g" lean/default-settings/files/zzz-default-settings
