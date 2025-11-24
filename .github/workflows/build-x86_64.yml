@@ -73,7 +73,7 @@ jobs:
       uses: klever1988/cachewrtbuild@main
       with:
         ccache: 'true'
-        mixkey: ${{ env.DEVICE }}
+        mixkey: ${{ matrix.DEVICE }}
         prefix: ${{ github.workspace }}/openwrt
 
     - name: Load custom feeds
@@ -133,7 +133,7 @@ jobs:
       if: env.UPLOAD_ONEDRIVE == 'true' && steps.compile.outputs.status == 'success' && !cancelled()
       run: |
         curl https://rclone.org/install.sh | sudo bash
-        rclone copy openwrt/bin/targets/*/* $ONEDRIVE_DIR/$(date +"%Y%m%d")/$DEVICE
+        rclone copy openwrt/bin/targets/*/* $ONEDRIVE_DIR/$(date +"%Y%m%d")/${{ matrix.DEVICE }}
 
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@main
