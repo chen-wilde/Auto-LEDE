@@ -34,7 +34,6 @@ jobs:
           - DEVICE: x86
             DIY_P3_SH: x86.sh
           - DEVICE: x86-1
-            DIY_P3_SH: x86-1.sh
 
     steps:
     - name: Maximize build space

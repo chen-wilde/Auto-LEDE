@@ -2,7 +2,7 @@
 #
 # https://github.com/chen-wilde/Auto-LEDE
 #
-# File name: x86-1.sh
+# File name: r2s.sh
 # Description: OpenWrt script for create remote config (Before diy script part 2)
 #
 # This is free software, licensed under the MIT License.
@@ -14,8 +14,12 @@ echo "$ACME_CONFIG" > files/etc/config/acme
 echo "$DDNS_CONFIG" > files/etc/config/ddns
 echo "$TUNNEL_CERT" > files/etc/cloudflared/cert.pem
 
+rm -rf feeds/packages/lang/golang
+git clone https://github.com/kenzok8/golang -b 1.25 feeds/packages/lang/golang
+
+sed -i '/\/etc\/init\.d\/tailscale/d;/\/etc\/config\/tailscale/d;' feeds/packages/net/tailscale/Makefile
 sed -i "s/enabled '0'/enabled '1'/" feeds/luci/applications/luci-app-tailscale/root/etc/config/tailscale
-sed -i "s/enabled '0'/enabled '1'/;s/token ''/token '$TUNX86_TOKEN1'/" feeds/packages/net/cloudflared/files/cloudflared.config
+sed -i "s/enabled '0'/enabled '1'/;s/token ''/token '$TUNR2S_TOKEN'/" feeds/packages/net/cloudflared/files/cloudflared.config
 
 api_request=$(curl -d "client_id=$CLIENT_ID" -d "client_secret=$CLIENT_SECRET" \
     "https://api.tailscale.com/api/v2/oauth/token")
