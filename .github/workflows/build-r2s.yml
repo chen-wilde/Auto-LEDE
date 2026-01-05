@@ -48,7 +48,7 @@ jobs:
         git clone https://github.com/friendlyarm/repo --depth 1
         sudo cp repo/repo /usr/bin/
 
-    - name: Download Source Code
+    - name: Download source code
       run: |
         mkdir friendlywrt23-rk3328
         cd friendlywrt23-rk3328
@@ -57,7 +57,7 @@ jobs:
                 -m rk3328.xml --repo-url=https://github.com/friendlyarm/repo  --no-clone-bundle
         tools/repo sync -c  --no-clone-bundle
 
-    - name: Setup Development Environment
+    - name: Setup development environment
       run: |
         sudo docker image prune --all --force
         sudo -E apt-get -qq update

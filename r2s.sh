@@ -18,7 +18,7 @@ rm -rf feeds/packages/lang/golang
 git clone https://github.com/kenzok8/golang -b 1.25 feeds/packages/lang/golang
 
 sed -i '/\/etc\/init\.d\/tailscale/d;/\/etc\/config\/tailscale/d;' feeds/packages/net/tailscale/Makefile
-sed -i "s/enabled '0'/enabled '1'/" feeds/luci/applications/luci-app-tailscale/root/etc/config/tailscale
+sed -i "s/enabled '0'/enabled '1'/" feeds/smpackage/luci-app-tailscale/root/etc/config/tailscale
 sed -i "s/enabled '0'/enabled '1'/;s/token ''/token '$TUNR2S_TOKEN'/" feeds/packages/net/cloudflared/files/cloudflared.config
 
 api_request=$(curl -d "client_id=$CLIENT_ID" -d "client_secret=$CLIENT_SECRET" \
@@ -44,7 +44,7 @@ key_request=$(curl 'https://api.tailscale.com/api/v2/tailnet/-/keys' \
 }')
 auth_key=$(echo $key_request | jq -r '.key')
 
-cat >> feeds/luci/applications/luci-app-tailscale/root/etc/config/tailscale << EOF
+cat >> feeds/smpackage/luci-app-tailscale/root/etc/config/tailscale << EOF
 	option accept_routes '0'
 	option advertise_exit_node '0'
 	list access 'ts_ac_lan'
@@ -68,4 +68,4 @@ cd package
 
 sed -i 's/-dhcp/-pppoe/' base-files/files/lib/functions/uci-defaults.sh
 sed -i "s/'username'/'$PPPOE_USER'/;s/'password'/'006688'/" base-files/files/bin/config_generate
-sed -i "s/\\\$1\\\$[^:]*:0:/$LEDE_PASSWD/g" lean/default-settings/files/zzz-default-settings
+sed -i "s/\\\$1\\\$[^:]*:0:/$LEDE_PASSWD/g" base-files/files/etc/shadow

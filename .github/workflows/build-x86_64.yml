@@ -19,8 +19,10 @@ env:
   REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: x86.config
+  DEVICE: x86_64
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
+  DIY_P3_SH: x86.sh
   UPLOAD_ONEDRIVE: true
   ONEDRIVE_DIR: onedrive:/Build/Actions
   TZ: Asia/Shanghai
@@ -28,12 +30,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - DEVICE: x86
-            DIY_P3_SH: x86.sh
-          - DEVICE: x86-1
 
     steps:
     - name: Maximize build space
@@ -72,13 +68,13 @@ jobs:
       uses: klever1988/cachewrtbuild@main
       with:
         ccache: 'true'
-        mixkey: ${{ matrix.DEVICE }}
+        mixkey: 'x86'
         prefix: ${{ github.workspace }}/openwrt
 
     - name: Load custom feeds
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        chmod +x $DIY_P1_SH $DIY_P2_SH ${{ matrix.DIY_P3_SH }}
+        chmod +x $DIY_P1_SH $DIY_P2_SH $DIY_P3_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
 
@@ -96,7 +92,7 @@ jobs:
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         cd openwrt
-        $GITHUB_WORKSPACE/${{ matrix.DIY_P3_SH }}
+        $GITHUB_WORKSPACE/$DIY_P3_SH
 
     - name: Download package
       id: package
@@ -132,7 +128,7 @@ jobs:
       if: env.UPLOAD_ONEDRIVE == 'true' && steps.compile.outputs.status == 'success' && !cancelled()
       run: |
         curl https://rclone.org/install.sh | sudo bash
-        rclone copy openwrt/bin/targets/*/* $ONEDRIVE_DIR/$(date +"%Y%m%d")/${{ matrix.DEVICE }}
+        rclone copy openwrt/bin/targets/*/* $ONEDRIVE_DIR/$(date +"%Y%m%d")/$DEVICE
 
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@main
