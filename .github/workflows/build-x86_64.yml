@@ -23,8 +23,9 @@ env:
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
   DIY_P3_SH: x86.sh
-  UPLOAD_ONEDRIVE: true
-  ONEDRIVE_DIR: onedrive:/Build/Actions
+  UPLOAD_ONEDRIVE: false
+  UPLOAD_RELEASE: true
+  ONEDRIVE_DIR: onedrive:Build
   TZ: Asia/Shanghai
 
 jobs:
@@ -118,17 +119,36 @@ jobs:
       if: (!cancelled())
       run: df -hT
 
-    - name: Restore Rclone Cache
-      uses: actions/cache/restore@main
-      with:
-        path: ~/.config/rclone/rclone.conf
-        key: rcloneConf
+    # - name: Restore Rclone Cache
+    #   uses: actions/cache/restore@main
+    #   with:
+    #     path: ~/.config/rclone/rclone.conf
+    #     key: rcloneConf
 
     - name: Upload firmware to onedrive
       if: env.UPLOAD_ONEDRIVE == 'true' && steps.compile.outputs.status == 'success' && !cancelled()
       run: |
         curl https://rclone.org/install.sh | sudo bash
         rclone copy openwrt/bin/targets/*/* $ONEDRIVE_DIR/$(date +"%Y%m%d")/$DEVICE
+
+    - name: Generate release tag
+      id: tag
+      if: env.UPLOAD_RELEASE == 'true' && steps.compile.outputs.status == 'success' && !cancelled()
+      run: |
+        echo "release_tag=$DEVICE-$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
+        touch release.txt
+        echo "status=success" >> $GITHUB_OUTPUT
+
+    - name: Upload firmware to release
+      uses: softprops/action-gh-release@master
+      if: steps.tag.outputs.status == 'success' && !cancelled()
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASES }}
+      with:
+        tag_name: ${{ steps.tag.outputs.release_tag }}
+        body_path: release.txt
+        files: openwrt/bin/targets/*/*/*
+        repository: chen-wilde/Releases
 
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@main
