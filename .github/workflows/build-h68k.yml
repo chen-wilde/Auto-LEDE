@@ -32,17 +32,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Maximize build space
-      uses: easimon/maximize-build-space@master
-      with:
-        root-reserve-mb: 3072
-        swap-size-mb: 1
-        remove-dotnet: 'true'
-        remove-android: 'true'
-        remove-haskell: 'true'
-        remove-codeql: 'true'
-        remove-docker-images: 'true'
-    
     - name: Checkout
       uses: actions/checkout@main
 
@@ -67,8 +56,8 @@ jobs:
     - name: Cache
       uses: klever1988/cachewrtbuild@main
       with:
-        ccache: 'true'
-        mixkey: 'h68k'
+        ccache: true
+        mixkey: h68k
         prefix: ${{ github.workspace }}/openwrt
 
     - name: Load custom feeds
