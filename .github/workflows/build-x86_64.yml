@@ -25,7 +25,7 @@ env:
   DIY_P3_SH: x86.sh
   UPLOAD_ONEDRIVE: false
   UPLOAD_RELEASE: true
-  ONEDRIVE_DIR: onedrive:Build
+  ONEDRIVE_DIR: onedrive:/
   TZ: Asia/Shanghai
 
 jobs:
@@ -60,7 +60,6 @@ jobs:
         sudo chown $USER:$GROUPS $GITHUB_WORKSPACE
 
     - name: Clone source code
-      working-directory: ./
       run: |
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
@@ -142,13 +141,12 @@ jobs:
     - name: Upload firmware to release
       uses: softprops/action-gh-release@master
       if: steps.tag.outputs.status == 'success' && !cancelled()
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASES }}
       with:
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
-        files: openwrt/bin/targets/*/*/*
         repository: chen-wilde/Releases
+        token: ${{ secrets.RELEASES }}
+        files: openwrt/bin/targets/*/*/*
 
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@main

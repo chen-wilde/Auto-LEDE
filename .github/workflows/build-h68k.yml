@@ -22,9 +22,10 @@ env:
   DEVICE: HinLink_H68K
   DIY_P1_SH: diy-part1.sh
   DIY_P2_SH: diy-part2.sh
+  DIY_P3_SH: h68k.sh
   UPLOAD_ONEDRIVE: false
   UPLOAD_RELEASE: true
-  ONEDRIVE_DIR: onedrive:Build
+  ONEDRIVE_DIR: onedrive:/
   TZ: Asia/Shanghai
 
 jobs:
@@ -59,7 +60,6 @@ jobs:
         sudo chown $USER:$GROUPS $GITHUB_WORKSPACE
 
     - name: Clone source code
-      working-directory: ./
       run: |
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
@@ -74,7 +74,7 @@ jobs:
     - name: Load custom feeds
       run: |
         [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        chmod +x $DIY_P1_SH $DIY_P2_SH
+        chmod +x $DIY_P1_SH $DIY_P2_SH $DIY_P3_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
 
@@ -87,9 +87,12 @@ jobs:
       run: cd openwrt && ./scripts/feeds install -a
 
     - name: Load custom configuration
+      env: ${{ secrets }}
       run: |
         [ -e files ] && mv files openwrt/files
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+        cd openwrt
+        $GITHUB_WORKSPACE/$DIY_P3_SH
 
     - name: Download package
       id: package
@@ -138,13 +141,12 @@ jobs:
     - name: Upload firmware to release
       uses: softprops/action-gh-release@master
       if: steps.tag.outputs.status == 'success' && !cancelled()
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASES }}
       with:
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
-        files: openwrt/bin/targets/*/*/*
         repository: chen-wilde/Releases
+        token: ${{ secrets.RELEASES }}
+        files: openwrt/bin/targets/*/*/*
 
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@main

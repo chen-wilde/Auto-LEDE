@@ -22,7 +22,7 @@ env:
   DIY_P3_SH: r2s.sh
   UPLOAD_ONEDRIVE: false
   UPLOAD_RELEASE: true
-  ONEDRIVE_DIR: onedrive:Build
+  ONEDRIVE_DIR: onedrive:/
   TZ: Asia/Shanghai
 
 jobs:
@@ -44,20 +44,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@main
 
-    - name: Install repo
-      run: |
-        git clone https://github.com/friendlyarm/repo --depth 1
-        sudo cp repo/repo /usr/bin/
-
-    - name: Download source code
-      run: |
-        mkdir friendlywrt23-rk3328
-        cd friendlywrt23-rk3328
-        git clone https://github.com/friendlyarm/repo --depth 1 tools
-        tools/repo init -u https://github.com/friendlyarm/friendlywrt_manifests -b master-v24.10 \
-                -m rk3328.xml --repo-url=https://github.com/friendlyarm/repo  --no-clone-bundle
-        tools/repo sync -c  --no-clone-bundle
-
     - name: Setup development environment
       run: |
         sudo docker image prune --all --force
@@ -68,13 +54,14 @@ jobs:
         sudo timedatectl set-timezone "$TZ"
         sudo chown $USER:$GROUPS $GITHUB_WORKSPACE
 
-    - name: Create build directory
-      working-directory: ./
+    - name: Download source code
       run: |
         df -hT $PWD
-        cd friendlywrt23-rk3328
-        repo sync -c --no-clone-bundle
-        mv friendlywrt $GITHUB_WORKSPACE/openwrt
+        git clone https://github.com/friendlyarm/repo --depth 1 tools
+        tools/repo init -u https://github.com/friendlyarm/friendlywrt_manifests -b master-v24.10 \
+                -m rk3328.xml --repo-url=https://github.com/friendlyarm/repo --no-clone-bundle
+        tools/repo sync -c --no-clone-bundle
+        mv friendlywrt openwrt
 
     - name: Cache
       uses: klever1988/cachewrtbuild@main
@@ -151,13 +138,12 @@ jobs:
     - name: Upload firmware to release
       uses: softprops/action-gh-release@master
       if: steps.tag.outputs.status == 'success' && !cancelled()
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASES }}
       with:
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
-        files: openwrt/bin/targets/*/*/*
         repository: chen-wilde/Releases
+        token: ${{ secrets.RELEASES }}
+        files: openwrt/bin/targets/*/*/*
 
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@main
