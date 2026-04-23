@@ -54,18 +54,6 @@ cat >> feeds/smpackage/luci-app-tailscale/root/etc/config/tailscale << EOF
 EOF
 
 cd package
-#cat >> network/config/firewall/files/firewall.config << EOF
-
-#config redirect
-#	option name		https
-#	option src		wan
-#	option src_dport	1443
-#	option dest		lan
-#	option dest_ip		192.168.1.1
-#	option dest_port	443
-#	option target		DNAT
-#EOF
-
 sed -i 's/-dhcp/-pppoe/' base-files/files/lib/functions/uci-defaults.sh
 sed -i "s/'username'/'$PPPOE_USER'/;s/'password'/'006688'/" base-files/files/bin/config_generate
 sed -i "s/\\\$1\\\$[^:]*:0:/$LEDE_PASSWD/g" base-files/files/etc/shadow

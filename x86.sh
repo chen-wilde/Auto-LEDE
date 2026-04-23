@@ -49,5 +49,6 @@ cat >> luci/applications/luci-app-tailscale/root/etc/config/tailscale << EOF
 	list flags '--auth-key=$auth_key'
 EOF
 
+sed -i '/\/etc\/init\.d\/tailscale/d;/\/etc\/config\/tailscale/d;' packages/net/tailscale/Makefile
 sed -i "s/enabled '0'/enabled '1'/" luci/applications/luci-app-tailscale/root/etc/config/tailscale
 sed -i "s/enabled '0'/enabled '1'/;s/token ''/token '$TUNX86_TOKEN'/" packages/net/cloudflared/files/cloudflared.config
